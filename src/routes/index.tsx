@@ -35,7 +35,7 @@ function InvoicesPage() {
     setInvoices(loadInvoices());
   }, []);
 
-  const editing = editingId ? invoices.find((i) => i.id === editingId) : null;
+  
 
   const startNew = () => {
     const inv = emptyInvoice();
@@ -82,7 +82,7 @@ function InvoicesPage() {
     );
   }, [invoices, query]);
 
-  if (editing && draft) {
+  if (draft) {
     return (
       <EditorScreen
         draft={draft}
