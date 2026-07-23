@@ -29,7 +29,7 @@ export const emptyInvoice = (): Invoice => ({
   id: crypto.randomUUID(),
   number: `INV-${String(Math.floor(Math.random() * 9000) + 1000)}`,
   status: "draft",
-  currency: "USD",
+  currency: "NGN",
   issueDate: new Date().toISOString().slice(0, 10),
   dueDate: new Date(Date.now() + 14 * 86400000).toISOString().slice(0, 10),
   fromName: "",
@@ -49,7 +49,8 @@ export const emptyInvoice = (): Invoice => ({
 
 export const currencySymbol = (code: string) => {
   const map: Record<string, string> = {
-    USD: "$", EUR: "€", GBP: "£", INR: "₹", JPY: "¥", CAD: "C$", AUD: "A$",
+    NGN: "₦",
+    USD: "$",
   };
   return map[code] ?? code + " ";
 };

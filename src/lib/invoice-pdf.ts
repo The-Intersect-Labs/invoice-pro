@@ -2,12 +2,19 @@ import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import { calcTotals, currencySymbol, type Invoice } from "./invoice-types";
 
+// Standard jsPDF fonts (Helvetica) do not include Unicode symbol for NGN (\u20A6),
+// which renders as broken bar (¦). We use 'NGN ' for PDF formatting to render cleanly.
+const pdfCurrencySymbol = (code: string) => {
+  if (code === "NGN") return "NGN ";
+  return currencySymbol(code);
+};
+
 const fmt = (n: number, sym: string) =>
   `${sym}${n.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 
 export const downloadInvoicePDF = (inv: Invoice) => {
   const doc = new jsPDF({ unit: "pt", format: "a4" });
-  const sym = currencySymbol(inv.currency);
+  const sym = pdfCurrencySymbol(inv.currency);
   const { subtotal, discount, tax, total } = calcTotals(inv);
   const pageW = doc.internal.pageSize.getWidth();
   const M = 48;
@@ -67,9 +74,9 @@ export const downloadInvoicePDF = (inv: Invoice) => {
     headStyles: { fillColor: [17, 24, 39], textColor: 255, fontStyle: "bold" },
     columnStyles: {
       0: { cellWidth: "auto" },
-      1: { halign: "right", cellWidth: 50 },
-      2: { halign: "right", cellWidth: 80 },
-      3: { halign: "right", cellWidth: 90 },
+      1: { halign: "right", cellWidth: 45 },
+      2: { halign: "right", cellWidth: 100 },
+      3: { halign: "right", cellWidth: 110 },
     },
     margin: { left: M, right: M },
     theme: "striped",
@@ -79,7 +86,7 @@ export const downloadInvoicePDF = (inv: Invoice) => {
   // Totals
   const finalY = (doc as unknown as { lastAutoTable: { finalY: number } }).lastAutoTable.finalY + 20;
   const rightX = pageW - M;
-  const labelX = pageW - M - 160;
+  const labelX = pageW - M - 200;
   doc.setFontSize(10);
   doc.setTextColor(75, 85, 99);
   let ty = finalY;
