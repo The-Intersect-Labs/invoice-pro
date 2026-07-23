@@ -1,0 +1,1 @@
+{"root":["./src/main.ts","./src/lib/invoice-pdf.ts","./src/lib/invoice-storage.ts","./src/lib/invoice-types.ts","./src/lib/utils.ts","./src/app.vue","./src/components/invoiceeditor.vue","./src/components/statusbadge.vue","./vite.config.ts"],"version":"5.9.3"}
