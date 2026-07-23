@@ -348,7 +348,7 @@ const formatMoney = (amount: number) =>
             class="group flex items-center gap-4 rounded-xl border border-border bg-card p-4 transition-all hover:shadow-sm"
           >
             <div
-              class="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-muted"
+              class="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-muted hidden md:flex"
             >
               <FileText class="h-5 w-5 text-muted-foreground" />
             </div>
