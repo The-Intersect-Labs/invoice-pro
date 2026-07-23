@@ -9,6 +9,8 @@ import {
   ArrowLeft,
   Search,
   CheckCircle2,
+  Sun,
+  Moon,
 } from "@lucide/vue";
 import type { Invoice } from "@/lib/invoice-types";
 import { emptyInvoice, calcTotals, currencySymbol } from "@/lib/invoice-types";
@@ -21,6 +23,7 @@ const invoices = ref<Invoice[]>([]);
 const editingId = ref<string | null>(null);
 const draft = ref<Invoice | null>(null);
 const query = ref("");
+const isDark = ref(false);
 
 const toast = ref<{ message: string; visible: boolean }>({
   message: "",
@@ -37,8 +40,28 @@ const triggerToast = (msg: string) => {
   }, 3000);
 };
 
+const toggleTheme = () => {
+  isDark.value = !isDark.value;
+  if (isDark.value) {
+    document.documentElement.classList.add("dark");
+    localStorage.setItem("invoice_app_theme", "dark");
+  } else {
+    document.documentElement.classList.remove("dark");
+    localStorage.setItem("invoice_app_theme", "light");
+  }
+};
+
 onMounted(() => {
   invoices.value = loadInvoices();
+  const saved = localStorage.getItem("invoice_app_theme");
+  const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+  if (saved === "dark" || (!saved && prefersDark)) {
+    isDark.value = true;
+    document.documentElement.classList.add("dark");
+  } else {
+    isDark.value = false;
+    document.documentElement.classList.remove("dark");
+  }
 });
 
 const startNew = () => {
@@ -137,7 +160,16 @@ const formatMoney = (amount: number) =>
             </div>
           </div>
 
-          <div class="flex gap-2">
+          <div class="flex items-center gap-2">
+            <button
+              type="button"
+              @click="toggleTheme"
+              class="inline-flex h-9 w-9 items-center justify-center rounded-md border border-input bg-background text-foreground shadow-xs transition-colors hover:bg-accent hover:text-accent-foreground"
+              :title="isDark ? 'Switch to light mode' : 'Switch to dark mode'"
+            >
+              <Sun v-if="isDark" class="h-4 w-4" />
+              <Moon v-else class="h-4 w-4" />
+            </button>
             <button
               type="button"
               @click="downloadInvoicePDF(draft)"
@@ -167,25 +199,37 @@ const formatMoney = (amount: number) =>
         <div class="mx-auto flex max-w-6xl items-center justify-between px-6 py-5">
           <div class="flex items-center gap-3">
             <div
-              class="flex h-9 w-9 items-center justify-center rounded-lg bg-primary text-primary-foreground"
+              class="flex h-9 w-9 items-center justify-center"
             >
-              <FileText class="h-5 w-5" />
+              <img src="/icon.png" alt="">
             </div>
             <div>
-              <h1 class="text-lg font-semibold leading-tight">Invoice Maker</h1>
+              <h1 class="text-lg font-semibold leading-tight">Invoice Pro</h1>
               <p class="text-xs text-muted-foreground">
                 Create, save & download professional invoices
               </p>
             </div>
           </div>
 
-          <button
-            type="button"
-            @click="startNew"
-            class="inline-flex items-center gap-1.5 justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow-xs transition-colors hover:bg-primary/90"
-          >
-            <Plus class="h-4 w-4" /> New invoice
-          </button>
+          <div class="flex items-center gap-2">
+            <button
+              type="button"
+              @click="toggleTheme"
+              class="inline-flex h-9 w-9 items-center justify-center rounded-md border border-input bg-background text-foreground shadow-xs transition-colors hover:bg-accent hover:text-accent-foreground"
+              :title="isDark ? 'Switch to light mode' : 'Switch to dark mode'"
+            >
+              <Sun v-if="isDark" class="h-4 w-4" />
+              <Moon v-else class="h-4 w-4" />
+            </button>
+
+            <button
+              type="button"
+              @click="startNew"
+              class="inline-flex items-center gap-1.5 justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow-xs transition-colors hover:bg-primary/90"
+            >
+              <Plus class="h-4 w-4" /> New invoice
+            </button>
+          </div>
         </div>
       </header>
 
