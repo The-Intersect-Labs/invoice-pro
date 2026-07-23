@@ -241,14 +241,14 @@ const formatMoney = (amount: number) =>
               @click="downloadInvoicePDF(draft)"
               class="inline-flex items-center gap-1.5 justify-center rounded-md border border-input bg-background px-4 py-2 text-sm font-medium shadow-xs transition-colors hover:bg-accent hover:text-accent-foreground"
             >
-              <Download class="h-4 w-4" /> Download PDF
+              <Download class="h-4 w-4" /> <span class="hidden md:inline">Download</span> PDF
             </button>
             <button
               type="button"
               @click="saveDraft"
               class="inline-flex items-center gap-1.5 justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow-xs transition-colors hover:bg-primary/90"
             >
-              <Save class="h-4 w-4" /> Save
+              <Save class="h-4 w-4" /> <span class="hidden md:inline">Save</span>
             </button>
           </div>
         </div>
@@ -271,7 +271,7 @@ const formatMoney = (amount: number) =>
             </div>
             <div>
               <h1 class="text-lg font-semibold leading-tight">Invoice Pro</h1>
-              <p class="text-xs text-muted-foreground">
+              <p class="text-xs text-muted-foreground hidden md:inline">
                 Create, save & download professional invoices
               </p>
             </div>
@@ -293,7 +293,7 @@ const formatMoney = (amount: number) =>
               @click="startNew"
               class="inline-flex items-center gap-1.5 justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow-xs transition-colors hover:bg-primary/90"
             >
-              <Plus class="h-4 w-4" /> New invoice
+              <Plus class="h-4 w-4" /> <span class="hidden md:inline">New invoice</span>
             </button>
           </div>
         </div>
@@ -367,7 +367,7 @@ const formatMoney = (amount: number) =>
               </p>
             </button>
 
-            <div class="text-right">
+            <div class="text-right hidden md:block">
               <div class="font-semibold tabular-nums text-foreground">
                 {{ getSymbol(inv.currency) }}{{ formatMoney(getTotals(inv).total) }}
               </div>
