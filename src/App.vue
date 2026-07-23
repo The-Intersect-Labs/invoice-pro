@@ -24,6 +24,8 @@ const editingId = ref<string | null>(null);
 const draft = ref<Invoice | null>(null);
 const query = ref("");
 const isDark = ref(false);
+const deferredPrompt = ref<any>(null);
+const showInstallPrompt = ref(false);
 
 const toast = ref<{ message: string; visible: boolean }>({
   message: "",
@@ -62,7 +64,32 @@ onMounted(() => {
     isDark.value = false;
     document.documentElement.classList.remove("dark");
   }
+
+  window.addEventListener("beforeinstallprompt", (e) => {
+    e.preventDefault();
+    deferredPrompt.value = e;
+    showInstallPrompt.value = true;
+  });
+
+  window.addEventListener("appinstalled", () => {
+    showInstallPrompt.value = false;
+    deferredPrompt.value = null;
+  });
 });
+
+const installApp = async () => {
+  if (!deferredPrompt.value) return;
+  deferredPrompt.value.prompt();
+  const { outcome } = await deferredPrompt.value.userChoice;
+  if (outcome === "accepted") {
+    showInstallPrompt.value = false;
+  }
+  deferredPrompt.value = null;
+};
+
+const dismissInstall = () => {
+  showInstallPrompt.value = false;
+};
 
 const startNew = () => {
   const inv = emptyInvoice();
@@ -136,6 +163,45 @@ const formatMoney = (amount: number) =>
       >
         <CheckCircle2 class="h-4 w-4" />
         <span>{{ toast.message }}</span>
+      </div>
+    </transition>
+
+    <!-- PWA Install Prompt -->
+    <transition
+      enter-active-class="transition duration-300 ease-out"
+      enter-from-class="opacity-0 translate-y-8"
+      enter-to-class="opacity-100 translate-y-0"
+      leave-active-class="transition duration-200 ease-in"
+      leave-from-class="opacity-100 translate-y-0"
+      leave-to-class="opacity-0 translate-y-8"
+    >
+      <div
+        v-if="showInstallPrompt"
+        class="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 flex w-[calc(100%-2rem)] max-w-sm flex-col items-center gap-3 rounded-2xl bg-card p-4 shadow-xl border border-border sm:flex-row sm:justify-between"
+      >
+        <div class="flex w-full items-center gap-3 text-sm sm:w-auto">
+          <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary text-primary-foreground">
+            <Download class="h-5 w-5" />
+          </div>
+          <div>
+            <p class="font-semibold text-foreground">Install Invoice Pro</p>
+            <p class="text-xs text-muted-foreground">For a better offline experience</p>
+          </div>
+        </div>
+        <div class="flex w-full gap-2 sm:w-auto">
+          <button
+            @click="dismissInstall"
+            class="flex-1 rounded-md border border-input bg-background px-3 py-1.5 text-xs font-medium shadow-xs transition-colors hover:bg-accent hover:text-accent-foreground sm:flex-none"
+          >
+            Not now
+          </button>
+          <button
+            @click="installApp"
+            class="flex-1 rounded-md bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground shadow-xs transition-colors hover:bg-primary/90 sm:flex-none"
+          >
+            Install
+          </button>
+        </div>
       </div>
     </transition>
 
